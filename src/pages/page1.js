@@ -9,7 +9,8 @@ function onClickPage2() {
     RouteHandle.call(RouteConstants.page_page2)
 }
 
-export default function Page1() {
+export default function Page1(args) {
+    console.log( "DEBUG > Page1.args:", args )
     return (
         <div>
             <button onClick={onClickHome}> Home </button> 

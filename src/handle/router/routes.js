@@ -21,21 +21,22 @@ export default class RouteHandle {
         this.dispatcherCB = cbFunc
     }
 
-    static call(next) {
-        this.dispatcherCB(next)
+    static call(next, args) {
+        // TODO: Validate args format...
+        this.dispatcherCB(next, args)
     }    
 
     // using only main
-    static Dispatch(routeName) {
+    static Dispatch(routeName, args = {}) {
         switch ( routeName ) {
-        case RouteConstants.page_home:                  return Home()
-        case RouteConstants.page_page1:                 return Page1()
-        case RouteConstants.page_page2:                 return Page2()
+        case RouteConstants.page_home:                  return Home(args)
+        case RouteConstants.page_page1:                 return Page1(args)
+        case RouteConstants.page_page2:                 return Page2(args)
         // when using React.Component class..
-        case RouteConstants.page_class_component:       return new ClassComponent().render()
+        case RouteConstants.page_class_component:       return new ClassComponent().render(args)
         // when using React.Component class as static variable
-        case RouteConstants.page_static_component:      return this.staticComponentClass.render()
-        default:                                        return Home()
+        case RouteConstants.page_static_component:      return this.staticComponentClass.render(args)
+        default:                                        return Home(args)
         }
     }
 }
