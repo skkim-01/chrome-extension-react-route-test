@@ -1,25 +1,25 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState, useEffect } from "react";
+import RouteHandle from "./handle/router/routes";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+export default function App() {
+  // store routeName: page  
+  const [routeName, setRouteName] = useState("/")  
+  useEffect(()=>{    
+    // set callbackfunction for route page
+    RouteHandle.setDispatcherCB(changePageCB)
+  }, [])
+
+  // refresh callback function : update route 
+  function changePageCB(next) {
+    // update useState
+    setRouteName(next)
+  }
+
+  // dispatch page with routename
+  function DispatchRouter() {
+    // dispatch page
+    return RouteHandle.Dispatch(routeName)    
+  }
+
+  return DispatchRouter()
 }
-
-export default App;
