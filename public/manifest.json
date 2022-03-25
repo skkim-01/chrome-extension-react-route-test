@@ -1,25 +1,26 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
-  "icons": [
-    {
-      "src": "favicon.ico",
-      "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/x-icon"
-    },
-    {
-      "src": "logo192.png",
-      "type": "image/png",
-      "sizes": "192x192"
-    },
-    {
-      "src": "logo512.png",
-      "type": "image/png",
-      "sizes": "512x512"
-    }
-  ],
-  "start_url": ".",
-  "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff"
+  "manifest_version": 3,
+  "name": "chrome-extension-react-route-test",
+  "description": "chrome extension / react / route test",
+  "version": "0.9",  
+  "permissions": [
+    "storage",
+    "activeTab",
+    "scripting"    
+  ],  
+  "action": {
+      "default_popup": "index.html",
+      "default_icon": {
+          "16": "logo192.png",
+          "32": "logo192.png",
+          "48": "logo192.png",
+          "128": "logo192.png"
+      }
+  },
+  "icons": {
+    "16": "logo192.png",
+    "32": "logo192.png",
+    "48": "logo192.png",
+    "128": "logo192.png"
+  }
 }
