@@ -45,6 +45,8 @@ export default class RouteHandle {
         // when using React.Component class..
         case RouteConstants.page_class_component:       return new ClassComponent().render(args)
         // when using React.Component class as static variable
+        // Currently, it is invalid code
+        // TODO: render() doesn't get args...
         case RouteConstants.page_static_component:      return this.staticComponentClass.render(args)
         default:                                        return Home(args)
         }
