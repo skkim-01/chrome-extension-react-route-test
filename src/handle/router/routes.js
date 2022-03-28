@@ -14,6 +14,8 @@ export class RouteConstants {
 
 export default class RouteHandle {
     static dispatcherCB = null
+    static updatePageCB = null
+
     static staticComponentClass = new ClassComponentStatic()
 
     // using only main
@@ -21,10 +23,18 @@ export default class RouteHandle {
         this.dispatcherCB = cbFunc
     }
 
+    static setUpdaterCB(cbFunc) {
+        this.updatePageCB = cbFunc
+    }
+
     static call(next, args) {
         // TODO: Validate args format...
         this.dispatcherCB(next, args)
-    }    
+    }
+    
+    static update() {
+        this.updatePageCB()
+    }
 
     // using only main
     static Dispatch(routeName, args = {}) {
