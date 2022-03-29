@@ -1,54 +1,149 @@
-import Page1 from "../../pages/page1"
-import Page2 from "../../pages/page2"
-import Home from "../../pages/home"
-import ClassComponent from "../../pages/page_class_component"
-import ClassComponentStatic from "../../pages/page_class_component_static"
+// change to singleton class
 
-export class RouteConstants {
-    static page_home = "/"
-    static page_page1 = "/page1"
-    static page_page2 = "/page2"
-    static page_class_component = "/page/class/component"
-    static page_static_component = "/page/static/component"
+// import target pages
+import Home from "../../pages/home"
+import TestPage1 from "../../pages/TestPage1"
+import TestPage2 from "../../pages/TestPage2"
+import NotFoundTest from "../../pages/NotFoundTest"
+import Page404 from "../../pages/page404"
+
+
+export default class RouteHandler {
+    // must initailize from main
+    static init(updateCB) {
+        RouteData.setUpdateCB(updateCB)
+        RouteData.buildContextMap()
+        RouteData.setInitialized(true)
+    }
+
+    static isInit() {
+        return RouteData.isInitialized()
+    }
+
+    // get context data by routeName
+    static getContext(routeName) {
+        return RouteData.getContext(routeName)
+    }
+
+    // update current page
+    static update(context={}, clear=false) {
+        if (clear) {
+            RouteData.clearContext(RouteData.getCurrent())
+        }
+        RouteData.updateContext(RouteData.getCurrent(), context)        
+        // TODO: store contextMap at localstorage
+        RouteData.invokeUpdateCB()
+    }
+
+    // route other page: overload?
+    static move(currentContext={}, next, nextContext={}) {        
+        RouteData.updateContext(RouteData.getCurrent(), currentContext)
+        RouteData.updateContext(next, nextContext)
+        RouteData.setCurrent(next)
+        RouteData.invokeUpdateCB()
+    }
+
+    static clearCurrentContext() {
+        //RouteData.clearContext(RouteData.getCurrent())        
+        this.update(null, true)
+    }
+
+    static clearAll() {
+        RouteData.clearContextMap()
+        this.update(null)
+    }
+
+    // fetch page
+    static fetch() {
+        //dbg print
+        console.log(`[dbg] route: ${RouteData.getCurrent()}`)
+        console.log(`[dbg] contextMap: ${JSON.stringify(RouteData.contextMap)}`)
+
+        switch ( RouteData.getCurrent() ) {
+            case '/': 
+                return Home(RouteData.getContext('/'))
+            case '/page1':
+                return new TestPage1(RouteData.getContext('/page1')).render()
+            case '/page2':
+                return new TestPage2(RouteData.getContext('/page2')).render()
+            case '/NotFoundTest':
+                return NotFoundTest()
+            default: 
+                return Page404()
+        }
+    }
 }
 
-export default class RouteHandle {
-    static dispatcherCB = null
-    static updatePageCB = null
+// define route name
+class RouteConstants {
+    static routeMap = {
+        '/': 'home',
+        '/page1': 'page1',
+        '/page2': 'page2',
+        '/NotFoundTest': 'notfoundtest'
+    }
+}
 
-    static staticComponentClass = new ClassComponentStatic()
+class RouteData {
+    static initialized = false
+    static updaterCBFunc = null
+    static current = '/'
+    static contextMap = {}
 
-    // using only main
-    static setDispatcherCB(cbFunc) {
-        this.dispatcherCB = cbFunc
+    static setInitialized(b) {
+        this.initialized = b
     }
 
-    static setUpdaterCB(cbFunc) {
-        this.updatePageCB = cbFunc
+    static isInitialized() {
+        return this.initialized
     }
 
-    static call(next, args) {
-        // TODO: Validate args format...
-        this.dispatcherCB(next, args)
-    }
-    
-    static update() {
-        this.updatePageCB()
+    static setCurrent(next) {
+        this.current = next
     }
 
-    // using only main
-    static Dispatch(routeName, args = {}) {
-        switch ( routeName ) {
-        case RouteConstants.page_home:                  return Home(args)
-        case RouteConstants.page_page1:                 return Page1(args)
-        case RouteConstants.page_page2:                 return Page2(args)
-        // when using React.Component class..
-        case RouteConstants.page_class_component:       return new ClassComponent().render(args)
-        // when using React.Component class as static variable
-        // Currently, it is invalid code
-        // TODO: render() doesn't get args...
-        case RouteConstants.page_static_component:      return this.staticComponentClass.render(args)
-        default:                                        return Home(args)
-        }
+    static getCurrent() {
+        return this.current
+    }
+
+    static setUpdateCB(cbFunc) {
+        this.updaterCBFunc = cbFunc
+    }
+
+    static invokeUpdateCB() {
+        this.updaterCBFunc()
+    }
+
+    static buildContextMap() {
+        Object.keys(RouteConstants.routeMap).forEach( (key) => {
+            this.contextMap = {
+                ...this.contextMap,
+                [key]: {}
+            }
+        })
+    }
+
+    static getContext(routeName) {
+        return this.contextMap[routeName]
+    }
+
+    static updateContext(routeName, context) {
+        if ( context && context != {} ) {
+            Object.keys(context).forEach( (key) => {
+                this.contextMap[routeName] = {
+                    ...this.contextMap[routeName],
+                    [key]: context[key]
+                }
+            })
+        }        
+    }
+
+    static clearContext(routeName) {
+        this.contextMap[routeName] = {}
+    }
+
+    static clearContextMap() {
+        this.contextMap = {}
+        this.buildContextMap()
     }
 }

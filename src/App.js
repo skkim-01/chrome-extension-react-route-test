@@ -1,29 +1,24 @@
-import { useState, useEffect } from "react";
-import RouteHandle from "./handle/router/routes";
-import useToggle from "./handle/router/usetoggle";
+import React from "react";
+import RouteHandler from "./handle/router/routes";
 
-export default function App() {
-  const [routeName, setRouteName] = useState("/")
-  const [routeArgs, setRouteArgs] = useState({})
-  const [refreshFlag, setRefreshFlag] = useToggle()
-
-  useEffect(()=>{
-    RouteHandle.setDispatcherCB(ChangePageCB)
-    RouteHandle.setUpdaterCB(UpdatePageCB)
-  }, [])
-
-  function ChangePageCB(next, args) {    
-    setRouteName(next)
-    setRouteArgs(args)
-  }
-  
-  function UpdatePageCB() {
-    setRefreshFlag()
+export default class App extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      flag: true
+    }
+    this.updateCallback = this.updateCallback.bind(this)
   }
 
-  function DispatchRouter() {    
-    return RouteHandle.Dispatch(routeName, routeArgs)
+  updateCallback() {
+    this.setState({ flag: !this.state.flag })
   }
 
-  return DispatchRouter()
+  componentWillMount() {
+    RouteHandler.init(this.updateCallback)
+  }
+
+  render() {
+    return RouteHandler.fetch()
+  }
 }
