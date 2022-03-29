@@ -1,11 +1,9 @@
 import React from "react";
 import RouteHandler from "../handle/router/routes"
 
-// only for dev
 function onClickHome() {
     RouteHandler.move(null, '/', null)
 }
-  
 
 export default function Page404() {
     return (

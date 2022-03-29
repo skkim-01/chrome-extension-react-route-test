@@ -18,6 +18,11 @@ export default class App extends React.Component {
     RouteHandler.init(this.updateCallback)
   }
 
+  // TODO: this function never reached...
+  componentWillUnmount() {
+
+  }
+
   render() {
     return RouteHandler.fetch()
   }

@@ -1,5 +1,3 @@
-// change to singleton class
-
 // import target pages
 import Home from "../../pages/home"
 import TestPage1 from "../../pages/TestPage1"
@@ -167,7 +165,7 @@ class RouteData {
     static loadFromLocalStorage() {
         const tmLasUpdated = window.localStorage.getItem("timestamp")
         const tmCurrent = new Date().getTime() / 1000
-        
+
         if ( tmCurrent-tmLasUpdated < 60 ) {
             console.log("[dbg] load previous data from local storage")
             const current = window.localStorage.getItem("current")
@@ -186,9 +184,6 @@ class RouteData {
             console.log("[dbg] ingnore previous data")
             this.#_saveRouteName()
             this.#_saveContextMap()
-        }    
-        
-
-        // TODO: load contextMap
+        }
     }
 }
