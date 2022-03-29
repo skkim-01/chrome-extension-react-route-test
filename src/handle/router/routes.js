@@ -13,6 +13,7 @@ export default class RouteHandler {
     static init(updateCB) {
         RouteData.setUpdateCB(updateCB)
         RouteData.buildContextMap()
+        RouteData.loadFromLocalStorage()
         RouteData.setInitialized(true)
     }
 
@@ -98,8 +99,10 @@ class RouteData {
         return this.initialized
     }
 
-    static setCurrent(next) {
+    static setCurrent(next) {        
         this.current = next
+        // store changed routerName at localstorage
+        this.#_saveRouteName()
     }
 
     static getCurrent() {
@@ -135,15 +138,57 @@ class RouteData {
                     [key]: context[key]
                 }
             })
-        }        
+        }
+        this.#_saveContextMap()
     }
 
     static clearContext(routeName) {
         this.contextMap[routeName] = {}
+        this.#_saveContextMap()
     }
 
     static clearContextMap() {
         this.contextMap = {}
         this.buildContextMap()
+        this.#_saveContextMap()
+    }
+
+    // private. handle localstorage
+    static #_saveRouteName() {
+        window.localStorage.setItem("current", this.current)
+        window.localStorage.setItem("timestamp", new Date().getTime() / 1000)
+    }
+
+    static #_saveContextMap() {
+        window.localStorage.setItem("contextmap", JSON.stringify(this.contextMap))
+        window.localStorage.setItem("timestamp", new Date().getTime() / 1000)
+    }
+
+    static loadFromLocalStorage() {
+        const tmLasUpdated = window.localStorage.getItem("timestamp")
+        const tmCurrent = new Date().getTime() / 1000
+        
+        if ( tmCurrent-tmLasUpdated < 60 ) {
+            console.log("[dbg] load previous data from local storage")
+            const current = window.localStorage.getItem("current")
+            if ( current ) {
+                this.current = current
+            } else {
+                this.#_saveRouteName()
+            }
+            const contextMap = JSON.parse(window.localStorage.getItem("contextmap"))
+            if ( contextMap ) {
+                this.contextMap = contextMap
+            } else {
+                this.#_saveContextMap()
+            }
+        } else {
+            console.log("[dbg] ingnore previous data")
+            this.#_saveRouteName()
+            this.#_saveContextMap()
+        }    
+        
+
+        // TODO: load contextMap
     }
 }
