@@ -2,9 +2,6 @@
 import Home from "../../pages/home"
 import TestPage1 from "../../pages/TestPage1"
 import TestPage2 from "../../pages/TestPage2"
-import NotFoundTest from "../../pages/NotFoundTest"
-import Page404 from "../../pages/page404"
-
 
 export default class RouteHandler {
     // must initailize from main
@@ -62,15 +59,24 @@ export default class RouteHandler {
             case '/': 
                 return Home(RouteData.getContext('/'))
             case '/page1':
-                return new TestPage1(RouteData.getContext('/page1')).render()
+                if( !SClasses.classTestPage1 ) {
+                    SClasses.classTestPage1 = new TestPage1(RouteData.getContext('/page1'))
+                }
+                return SClasses.classTestPage1.render()
             case '/page2':
-                return new TestPage2(RouteData.getContext('/page2')).render()
-            case '/NotFoundTest':
-                return NotFoundTest()
+                if( !SClasses.classTestPage2 ) {
+                    SClasses.classTestPage2 = new TestPage2(RouteData.getContext('/page2'))
+                }
+                return SClasses.classTestPage2.render()
             default: 
-                return Page404()
+                return Home(RouteData.getContext('/'))
         }
     }
+}
+
+class SClasses {
+    static classTestPage1 = null
+    static classTestPage2 = null
 }
 
 // define route name
@@ -78,8 +84,7 @@ class RouteConstants {
     static routeMap = {
         '/': 'home',
         '/page1': 'page1',
-        '/page2': 'page2',
-        '/NotFoundTest': 'notfoundtest'
+        '/page2': 'page2'
     }
 }
 

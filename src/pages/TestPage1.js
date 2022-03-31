@@ -1,10 +1,9 @@
 import React from "react";
-import RouteHandler from "../handle/router/routes"
 import { TextField } from "@material-ui/core";
 import QRCode from "react-qr-code";
+import BaseComponent from "./_baseComponent";
 
-// test code: React.Component
-export default class TestPage1 extends React.Component {
+export default class TestPage1 extends BaseComponent {
     constructor(props) {        
         super(props);
         this.state = {
@@ -14,7 +13,9 @@ export default class TestPage1 extends React.Component {
         if (props.text) {
             this.state.text = props.text
         }
+        
         this.keyPress = this.keyPress.bind(this)
+        this.onClickHome = this.onClickHome.bind(this)
     }
 
     render() {
@@ -35,13 +36,16 @@ export default class TestPage1 extends React.Component {
         );
     }
 
-    onClickHome() {
-        RouteHandler.move(null, '/', null)
+    onClickHome() {        
+        super.route('/')
     }
 
     keyPress(event) {        
-        if ( event.keyCode == 13 ) {
-            RouteHandler.update({text: event.target.value})            
+        if ( event.keyCode == 13 ) {            
+            if( this.state.text == event.target.value ) return
+            super.setState({
+                text: event.target.value
+            })
         }
     }
 }

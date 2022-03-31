@@ -1,85 +1,85 @@
 import React from "react";
-import RouteHandler from "../handle/router/routes"
-import randomWords from "random-words"
+import CircularProgress from '@mui/material/CircularProgress';
+import { AsyncComponent } from "./_baseComponent";
 
-// test code: React.Component
-export default class TestPage2 extends React.Component {
-    constructor(props) {        
+
+// test page
+export default class TestPage2 extends AsyncComponent {
+    customValue = 1
+
+    constructor(props) {
         super(props);
         this.state = {
-            id: 0,
-            name: '',
-            description: '',
-            raw: {}
+            count: 0
         };
-
-        if(props) {
-            this.state = {
-                ...this.state,
-                ...props
-            }
-        }
-
-        this.onClickCheckContext = this.onClickCheckContext.bind(this)
-        this.onClickGenerateContext = this.onClickGenerateContext.bind(this)
-        this.onClickClearCurrent = this.onClickClearCurrent.bind(this)
-        this.onClickClearAll = this.onClickClearAll.bind(this)
+        this.onClicked = this.onClicked.bind(this)
+        this.onClickedSkipAsync = this.onClickedSkipAsync.bind(this)
+        this.onClickedHome = this.onClickedHome.bind(this)
+        this.preRender = this.preRender.bind(this)
+        this.render = this.render.bind(this)
+        this.successRender = this.successRender.bind(this)
     }
 
-    onClickClearCurrent() {
-        RouteHandler.clearCurrentContext()
+    onClicked() {
+        this.customValue = this.customValue + 1
+        super.setState({ count: this.state.count + 1 })
     }
 
-    onClickClearAll() {
-        RouteHandler.clearAll()
+    onClickedSkipAsync() {
+        this.customValue = this.customValue + 1
+        super.setState({ count: this.state.count + 1 }, true)
     }
 
-    
-    onClickCheckContext() {
-        window.alert(JSON.stringify(this.state))
+    onClickedHome() {
+        super.route("/")
     }
 
-    onClickGenerateContext() {
-        let context = { 
-            id: Math.floor(Math.random() * 65535),
-            name: randomWords(),
-            description: randomWords(10),
-            raw: {
-                subkey: 'subvalue',
-                subMap: {
-                    'k': 'v'
-                },
-                subArray: [
-                    1, '2', {'k': 3}, [4, '5']
-                ],
-                result: true                
-            }
-        }
-        RouteHandler.update(context)
+    render() {        
+        return super.render(this.preRender, this.successRender, this.waitRender)
     }
 
-    render() {
+    async preRender() {
+        await this.sleep(3000)
+    }
+
+    waitRender() {
         return (
             <div>
-                <button onClick={this.onClickHome}> Home </button> 
-                <p>Current Page: {'/page2'}</p>
-                <p>
-                    <button onClick={this.onClickCheckContext}> check context </button>
-                </p>
-                <p>
-                    <button onClick={this.onClickGenerateContext}> generate context </button>
-                </p>
-                <p>
-                    <button onClick={this.onClickClearCurrent}> clear current context </button>
-                </p>
-                <p>
-                    <button onClick={this.onClickClearAll}> clear all context </button>
-                </p>
+                <CircularProgress />
+                <text>now loading... 3sec</text>
             </div>
-        );
+        )        
     }
 
-    onClickHome() {
-        RouteHandler.move(null, '/', null)
+    successRender() {
+        return (
+            <div>
+                <p>
+                    <button onClick={this.onClickedHome}>
+                        home
+                    </button>
+                </p>
+                <p>                
+                    State Count : {this.state.count}                    
+                </p>
+                <p>
+                    custom Count : {this.customValue}
+                </p>
+                <p>
+                <button onClick={this.onClicked}>
+                    Render: retry async function
+                </button>
+                </p>
+                <p>
+                <button onClick={this.onClickedSkipAsync}>
+                    Render: skip async function
+                </button>
+                </p>                
+            </div>
+        )
+    }
+
+    sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
     }
 }
