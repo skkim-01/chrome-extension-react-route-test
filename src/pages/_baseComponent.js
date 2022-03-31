@@ -48,7 +48,6 @@ export class AsyncComponent {
     }
     
     render(asyncRunnerFn, resultFn, waitFn) {
-        console.log("AsyncComponent::render():", this.asyncFunctionExecuted)
         if( !this.asyncFunctionExecuted ) {
             this.executeAsyncRunner(asyncRunnerFn)
         }
