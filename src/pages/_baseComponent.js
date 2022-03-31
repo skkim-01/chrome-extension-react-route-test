@@ -61,8 +61,7 @@ export class AsyncComponent {
         this.state = {
             ...this.state,
             ...nextState            
-        }
-        console.log("setState:", isAsyncFunction, this.asyncFunctionExecuted)
+        }        
         RouteHandler.update(nextState)
     }
 }
