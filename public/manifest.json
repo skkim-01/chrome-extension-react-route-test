@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "chrome-extension-react-route-test",
-  "description": "route / contextMap / localstorage / async",
-  "version": "0.9.3",
+  "description": "route / singleton instance",
+  "version": "0.9.4",
   "permissions": [
     "storage",
     "activeTab",
