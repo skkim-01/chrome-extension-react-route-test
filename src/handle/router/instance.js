@@ -19,6 +19,7 @@ export default class RouteInstance {
 
     static getInstance() {
         if ( RouteInstance._Instance == null ) {
+            // TODO: Mutex Lock - Unlock when create instance
             RouteInstance._Instance = new RouteInstance();
         }
         return this._Instance;
